@@ -8,7 +8,7 @@ import scipy
 
 from networkx.algorithms import tournament
 import matplotlib.pyplot as plt
-
+import matplotlib
 
 #helper function 
 
