@@ -34,7 +34,7 @@ Also, I have yet to implement a non-ambiguous coloring scheme. One sees that the
 
 ## More edges in the graph.
 
-Let's see what it looks like with diagonals allowed in the grid. It's already more interesting! 
+Let's see what it looks like with diagonals allowed in the grid. It's already more interesting! I also randomized the colors.
 
 <img src = "diag_grid.png"/>
 
