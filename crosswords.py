@@ -178,10 +178,15 @@ def simple_grid_crossword(clues, n,m):
     
     #plot the graph 
 
+    #get randomized list for colorings.
+    num_words = len(clues)
+
+    rand_color = np.random.permutation([i for i in range(num_words)])
+
     for word in pathdict.keys():
 
-        nx.draw_networkx_edges(pathdict[word],pos,edge_color = matplotlib.colors.to_hex(cmap(i/span)),ax=axes[0])
-        nx.draw_networkx_edges(pathdict[word],pos,edge_color = matplotlib.colors.to_hex(cmap(i/span)),ax=axes[0])
+        nx.draw_networkx_edges(pathdict[word],pos,edge_color = matplotlib.colors.to_hex(cmap(rand_color[i]/span)),ax=axes[0])
+        nx.draw_networkx_edges(pathdict[word],pos,edge_color = matplotlib.colors.to_hex(cmap(rand_color[i]/span)),ax=axes[0])
         nx.draw_networkx_nodes(pathdict[word],pos,node_color = matplotlib.colors.to_hex(nodemap(.1)),ax=axes[0])
         i = i + 1
     plt.axis("on")
@@ -196,7 +201,7 @@ def simple_grid_crossword(clues, n,m):
     for word in pathdict.keys():
         
         clues[word].append(list(pathdict[word].nodes())[0])
-        plt.text(0,(m-1)*i/len(pathdict),clues[word][0] + ": " + str(clues[word][1]),color = matplotlib.colors.to_hex(cmap(i/span)),fontsize=20)
+        plt.text(0,(m-1)*i/len(pathdict),clues[word][0] + ": " + str(clues[word][1]),color = matplotlib.colors.to_hex(cmap(rand_color[i]/span)),fontsize=20)
         i = i + 1
     
     #need to do better to color in a non-interacting way
