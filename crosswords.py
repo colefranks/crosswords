@@ -9,15 +9,16 @@ import scipy
 from networkx.algorithms import tournament
 import matplotlib.pyplot as plt
 
+
 #helper function 
 
-def letter_filter(G, filterlist):
-    kept = []
-    for v in G.nodes():
-        if G.nodes[v]['letter'] in filterlist[v[1]]:
-            kept.append(v)
-    return kept
-
+def word_to_dict(word):
+    dictio = {}
+    i =0
+    for letter in word:
+        dictio[i]=letter
+        i = i + 1
+    return dictio
 
 #greedily chooses next path for the word. Just requires that the given digraph have no directed cycles.
 
