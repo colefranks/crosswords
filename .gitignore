@@ -3,7 +3,6 @@ exp
 *__pycache__*
 *core.*
 *.jpg
-*.png
 *.pkl
 *.txt
 *.json
