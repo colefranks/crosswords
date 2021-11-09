@@ -78,50 +78,71 @@ def get_path(labeled_graph,word):
     return P
 
 
-#make the actual crossword by iteratively applying get_path to current crossword.
-#G is the underlying graph of edges that may be used, 
 
-def crossword(G, wordlist):
-    wordlist = np.random.permutation(wordlist)
-    pathdict = {}
-    for v in list(G.nodes):
-        G.nodes[v]['letter']='*'
+
+#F should be an acyclic multidigraph (the underlying graph)
+#wordlist a list of strings (the answers)
+
+def crossword(F, wordlist,max_iter=20):
+    nopath=True
+    for v in list(F.nodes):
+        F.nodes[v]['letter']='*'
+    iter=0
+    while nopath and iter < max_iter:
+        iter+=1
+        G = F.copy()
+        wordlist = np.random.permutation(wordlist)
+        pathdict = {}
         
-    #for the first word, try deleting a bunch of nodes of G
-    H = G.copy()
-    PERCENTAGE = 0.5
-    H.remove_nodes_from(random.sample(list(H.nodes),math.floor(G.order()*PERCENTAGE)))
-    firstword = wordlist[0]
-    path = get_path(H,firstword)
-    i = 0
-    for v in list(path.nodes):
-        path.nodes[v]['letter']=firstword[i]
-        i = i + 1
-    pathdict[firstword]=path
-    G = nx.compose(G,path)
-        #print(pathlist)
-    G.remove_edges_from(list(path.edges()))
-    wordlist = wordlist[1:]
-
-    
-    for word in wordlist:
-        path = get_path(G,word)
+        #for the first word, try deleting a bunch of nodes of G
+        H = G.copy()
+        PERCENTAGE = 0.5
+        H.remove_nodes_from(random.sample(list(H.nodes),math.floor(G.order()*PERCENTAGE)))
+        firstword = wordlist[0]
+        try: 
+            path = get_path(H,firstword)
+        except nx.NetworkXNoPath:
+            nopath=True
+            continue  
         i = 0
         for v in list(path.nodes):
-            path.nodes[v]['letter']=word[i]
+            path.nodes[v]['letter']=firstword[i]
             i = i + 1
-        pathdict[word]=path
+        pathdict[firstword]=path
         G = nx.compose(G,path)
         #print(pathlist)
         G.remove_edges_from(list(path.edges()))
+        wordlist = wordlist[1:]
+
+    
+        for word in wordlist:
+            #get the path. if there is none, just start over
+            #when we start over we need to copy.
+            #could have some "dropout" to enforce randomness.
+            try: 
+                path = get_path(G,word)
+            except nx.NetworkXNoPath:
+                nopath=True
+                break
+            nopath=False
+            i = 0
+            for v in list(path.nodes):
+                path.nodes[v]['letter']=word[i]
+                i = i + 1
+            pathdict[word]=path
+            G = nx.compose(G,path)
+            #print(pathlist)
+            G.remove_edges_from(list(path.edges()))
         
-    for path in pathdict.values():
-        G = nx.compose(G,path)
+        if nopath:
+            continue
+            
+        for path in pathdict.values():
+            G = nx.compose(G,path)
         
     return G,pathdict
 
-
-# a first attempt 
+# a first attempt using grid
 
 
 def simple_grid_crossword(clues, n,m):
@@ -131,62 +152,46 @@ def simple_grid_crossword(clues, n,m):
     H.add_edges_from(G.edges())
     
     G,pathdict = crossword(H,list(clues.keys()))
-    #really this should catch the "no path" error.
     
     #set position as vertex name; this only makes sense for grid graph.
 
     pos = {}
     for v in list(G.nodes):
         pos[v]=v
-
+    
+    #could also do spring layout
+    #pos = nx.spring_layout(G)
+    #print(pos)
+    
     
     i=0
     cmap = plt.cm.get_cmap('Dark2')
     nodemap = plt.cm.get_cmap('Blues')
     span = len(pathdict.values())
-    #fig1 = plt.subplot(1, 2, 1)
-    #plt.axis("off")
-    #fig2 = plt.subplot(1, 2, 2)
-    #plt.axis("on")
-    #fig = plt.()
+
     fig, axes = plt.subplots(1,2,figsize=(10,5),sharey=True)
     
-    #plot graph
-    
-    #plt.subplot(121)
-    axes[0].plot()
-    #axes[0].xaxis.set_tick_params(labelbottom=True)
 
-    #plt.axis("on")
+    axes[0].plot()
+    
+    #plot the graph 
 
     for word in pathdict.keys():
-        #switch to graph figure 
-        #ax1.plot()
+
         nx.draw_networkx_edges(pathdict[word],pos,edge_color = matplotlib.colors.to_hex(cmap(i/span)),ax=axes[0])
         nx.draw_networkx_edges(pathdict[word],pos,edge_color = matplotlib.colors.to_hex(cmap(i/span)),ax=axes[0])
         nx.draw_networkx_nodes(pathdict[word],pos,node_color = matplotlib.colors.to_hex(nodemap(.1)),ax=axes[0])
         i = i + 1
     plt.axis("on")
-    #plt.xlim([0,m])
-    #plt.ylim([0,n])
     axes[0].tick_params(left=True, bottom=True, labelleft=True, labelbottom=True)
 
     
     #plot clues
     i = 0
-    #I understand nothing
-    #plt.subplot(122)
+
     axes[1].plot()
     plt.axis("off")
     for word in pathdict.keys():
-        #switch to graph figure 
-        #ax1.plot()
-        
-        #switch to clue figure
-        #axs[1].plot()
-        
-        #print(list(pathdict[word].nodes()), word)
-        #read from the bottom 
         
         clues[word].append(list(pathdict[word].nodes())[0])
         plt.text(0,(m-1)*i/len(pathdict),clues[word][0] + ": " + str(clues[word][1]),color = matplotlib.colors.to_hex(cmap(i/span)),fontsize=20)
