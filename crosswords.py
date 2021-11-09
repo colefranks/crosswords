@@ -208,6 +208,90 @@ def simple_grid_crossword(clues, n,m):
     
     return fig
 
+## allow diagonals
+
+def diag_grid_crossword(clues, n,m):
+    G = nx.grid_graph(dim=[n,m])
+
+    for v in list(G.nodes):
+        #check if on boundary.
+        #print(v)
+        if v[0]<n-1 and v[1]<m-1:
+            G.add_edge(v,(v[0]+1,v[1]+1))
+        if v[0]>0 and v[1]<m-1:
+            G.add_edge(v,(v[0]-1,v[1]+1))
+        if v[0]<n-1 and v[1]>0:
+            G.add_edge(v,(v[0]+1,v[1]-1))
+
+
+    H = nx.MultiDiGraph()
+    H.add_nodes_from(G.nodes())
+    H.add_edges_from(G.edges())
+    
+    G,pathdict = crossword(H,list(clues.keys()))
+
+
+    
+    #set position as vertex name; this only makes sense for grid graph.
+
+    pos = {}
+    for v in list(G.nodes):
+        pos[v]=v
+    
+    #could also do spring layout
+    #pos = nx.spring_layout(G)
+    #print(pos)
+    
+    
+    i=0
+    cmap = plt.cm.get_cmap('Dark2')
+    nodemap = plt.cm.get_cmap('Blues')
+    span = len(pathdict.values())
+
+    fig, axes = plt.subplots(1,2,figsize=(10,5),sharey=True)
+    
+
+    axes[0].plot()
+    
+    #plot the graph 
+
+    #get randomized list for colorings.
+    num_words = len(clues)
+
+    rand_color = np.random.permutation([i for i in range(num_words)])
+
+    for word in pathdict.keys():
+
+        nx.draw_networkx_edges(pathdict[word],pos,edge_color = matplotlib.colors.to_hex(cmap(rand_color[i]/span)),ax=axes[0])
+        nx.draw_networkx_edges(pathdict[word],pos,edge_color = matplotlib.colors.to_hex(cmap(rand_color[i]/span)),ax=axes[0])
+        nx.draw_networkx_nodes(pathdict[word],pos,node_color = matplotlib.colors.to_hex(nodemap(.1)),ax=axes[0])
+        i = i + 1
+    plt.axis("on")
+    axes[0].tick_params(left=True, bottom=True, labelleft=True, labelbottom=True)
+
+    
+    #plot clues
+    i = 0
+
+    axes[1].plot()
+    plt.axis("off")
+    for word in pathdict.keys():
+        
+        clues[word].append(list(pathdict[word].nodes())[0])
+        plt.text(0,(m-1)*i/len(pathdict),clues[word][0] + ": " + str(clues[word][1]),color = matplotlib.colors.to_hex(cmap(rand_color[i]/span)),fontsize=20)
+        i = i + 1
+    
+    #need to do better to color in a non-interacting way
+    
+    return fig
+
+
+## sorting 
+
+#to sort by similarity, maybe one wants to put letters with similar character count vectors together.
+#seems hard - given a metric, finding a shortest path visiting all is TSP. 
+#heuristic: greedy. 
+
 
 
 
