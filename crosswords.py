@@ -143,6 +143,7 @@ def crossword(F, wordlist,max_iter=20):
     return G,pathdict
 
 # a first attempt using grid
+#clues is a word:clue dictionary
 
 
 def simple_grid_crossword(clues, n,m):
