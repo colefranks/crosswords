@@ -38,4 +38,19 @@ Let's see what it looks like with diagonals allowed in the grid. It's already mo
 
 <img src = "diag_grid.png"/>
 
+With a larger crossword and more random English words, it gets even more interesting. 
+There are still a lot of degree 1 vertices, which is undesirable. Hopefully the other tricks will 
+help increase the density.
+
+<img src = "big_diag_grid.png"/>
+
+In the best case, we could hope that our crossword uses every edge. Because the average degree is about 7, this means we fit around $7*m*n/2$ edges. Each word of length $l$ requires $l-1$ edges. Thus we expect to fit around $7 m n/ 2l$ words, where $l$ is the average word size.
+
+## Better sorting 
+
+TODO: measure similarity of words by similarity of character count vectors in $\mathbb{Z}^26$. Order the sequence so that the path through that metric space is short. Computationally hard but will use simple heuristic.
+
+## Gracefully failing
+
+Sometimes the generator can't successfully fit the words you want. Right now it arbitrarily gives up after 20 tries. At that point it just outputs whatever it has, which is not quite fully baked. The coloring doesn't happen properly. This should be an easy fix.
 
