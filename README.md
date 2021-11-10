@@ -48,7 +48,7 @@ In the best case, we could hope that our crossword uses every edge. Because the 
 
 ## Better sorting 
 
-TODO: measure similarity of words by similarity of character count vectors in $\mathbb{Z}^26$. Order the sequence so that the path through that metric space is short. Computationally hard but will use simple heuristic.
+TODO: measure similarity of words by similarity of the 26-dimensional character count vectors. Order the sequence so that the path through that metric space is short. Computationally hard but will use simple heuristic.
 
 ## Gracefully failing
 
