@@ -44,7 +44,7 @@ help increase the density.
 
 <img src = "big_diag_grid.png"/>
 
-In the best case, we could hope that our crossword uses every edge. Because the average degree is about 7, this means we fit around $$7*m*n/2$$ edges. Each word of length $l$ requires $l-1$ edges. Thus we expect to fit around $7 m n/ 2l$ words, where $l$ is the average word size.
+In the best case, we could hope that our crossword uses every edge. Because the average degree is about 7, this means we fit around 7mn/2 edges. Each word of length l requires l-1 edges. Thus we expect to fit around 7 m n/ 2l words, where l is the average word length.
 
 ## Better sorting 
 
